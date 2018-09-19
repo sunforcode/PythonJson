@@ -1,4 +1,5 @@
 import json
+from create_case1 import GenCasePy
 from workJson import jsonString
 
 def handleParam():
@@ -43,6 +44,7 @@ def getParamsDic(dic):
 rootJson = json.loads(jsonString)
 
 queryTypeName = rootJson["data"]["__schema"]["queryType"]["name"]
+queryType=str(queryTypeName).split("Type")[0]
 mutationTypeName=rootJson["data"]["__schema"]["mutationType"]["name"]
 typesArray = rootJson["data"]["__schema"]["types"]     #是个list
 
@@ -106,15 +108,21 @@ def formartString(queryString,paramasString,portName,inputObject):
     }}""".format(query = queryString,paramas = paramasString,portName = portName,inputObject = inputObject)
     return  formatString
 
+serviceName = ""
+createdServices=[]
 for signleField in fieldArray:
+    # field下的list
     i = 0
     print("==============================")
     print("接口名称是 "+signleField["name"])
     argsArray = signleField.get("args")
     print("参数的数量是%d"%len(argsArray))
+    serviceName = signleField["service"]
     print("--------------")
     paramasString = ""
+    argsNameList = []
     for arg in argsArray:
+        # args里面的所有参数
         print("第 %d 个参数" % i)
         i += 1
         resultList = getParamsDic(arg)  #将所有参数的要求保存到了一个数组中
@@ -123,10 +131,42 @@ for signleField in fieldArray:
             paramasString += ", "
         paramasString += "$"+arg["name"]+": "+handledSingleParam
         print("---")
+        argsNameList.append(arg["name"])
     paramasString = "\"" + paramasString + "\""
     print(paramasString)
-    last = formartString("query",paramasString,signleField["name"],"")
-    print(last)
+    portName = signleField["name"]
+    last = formartString("query",paramasString,portName,"")
+    args = ""
+    variableString = ""
+    for name in argsNameList:
+        args = args + name +","
+        variableString = variableString + "\"" + name + "\"" +":"+name  + "," +"\t"+"\t"+"\t"+"\n"
+    args = args[0:len(args) -1]
+    variableString = variableString[0:len(variableString) -2]
+    print(args) # 参数列表
+    print("query")
+    print(portName)
+    print(paramasString)
+    print(serviceName)
+    inputObject = ""
+    for argName in argsNameList:
+        inputObject = inputObject + argName + ": $" + argName + ","
+
+    inputObject = inputObject[0:len(inputObject)-1]
+    print(inputObject)
+    print("====-------")
+    print(variableString)
+    creater = GenCasePy(queryString="query", argsString=args, paramasString=paramasString, apiName=portName,
+                        serviceName=serviceName, inputObject=inputObject, variableString=variableString)
+    if serviceName not in createdServices:
+        creater.createFileClass()
+        createdServices.append(serviceName)
+    creater.createPyFile()
+
+
+
+
+
 
 
 
