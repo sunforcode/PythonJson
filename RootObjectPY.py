@@ -110,6 +110,7 @@ def formartString(queryString,paramasString,portName,inputObject):
 
 serviceName = ""
 createdServices=[]
+
 for signleField in fieldArray:
     # field下的list
     i = 0
@@ -121,6 +122,8 @@ for signleField in fieldArray:
     print("--------------")
     paramasString = ""
     argsNameList = []
+    args = ""
+    variableString = ""
     for arg in argsArray:
         # args里面的所有参数
         print("第 %d 个参数" % i)
@@ -132,17 +135,34 @@ for signleField in fieldArray:
         paramasString += "$"+arg["name"]+": "+handledSingleParam
         print("---")
         argsNameList.append(arg["name"])
+
+        args = args + arg["name"] + ","
+        single = ""
+
+        if resultList[0] == "SCALAR" and  resultList[1] == "Int" :
+            single = "\t\t\t"+"\"" + arg["name"] + "\"" + ":" + "int" + "(" + arg["name"] + ")" + "," + "\n"
+            pass
+
+        else: #resultList[0] == "SCALAR" and resultList[1] == "String":
+            single ="\t\t\t"+ "\"" + arg["name"] + "\"" + ":" + arg["name"] + "," + "\t" + "\t" + "\t" + "\n"
+        pass
+        variableString = variableString  + single
+
+    args = args[0:len(args) - 1]
+    variableString = variableString[0:len(variableString) - 2]
+
     paramasString = "\"" + paramasString + "\""
     print(paramasString)
     portName = signleField["name"]
     last = formartString("query",paramasString,portName,"")
-    args = ""
-    variableString = ""
-    for name in argsNameList:
-        args = args + name +","
-        variableString = variableString + "\"" + name + "\"" +":"+name  + "," +"\t"+"\t"+"\t"+"\n"
-    args = args[0:len(args) -1]
-    variableString = variableString[0:len(variableString) -2]
+
+
+    # for name in argsNameList:
+    #     args = args + name +","
+    #     variableString = variableString + "\"" + name + "\"" +":"+name  + "," +"\t"+"\t"+"\t"+"\n"
+    # args = args[0:len(args) -1]
+    # variableString = variableString[0:len(variableString) -2]
+
     print(args) # 参数列表
     print("query")
     print(portName)
