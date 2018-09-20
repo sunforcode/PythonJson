@@ -1,19 +1,8 @@
 
 class pyDecoder(object):
 
-
-
-     def formartString(self, queryString, paramasString, APIName, inputObject):
-            formatString = """{query} ({paramas}) {{
-            {APIName}({inputObject}) {{
-                __typename
-            }}
-            }}""".format(query=queryString, paramas=paramasString, APIName=APIName, inputObject=inputObject)
-
-            return formatString
-
-
-     @classmethod #args = args + argName + ","
+     #形参列表
+     @classmethod
      def funcFormalParaList(cls,fieldDic):
          funcFormalParaList = ""
          for param in fieldDic.paramsList:
@@ -23,28 +12,28 @@ class pyDecoder(object):
 
      #eg: after: $after,before: $before,first: $first,last: $last,marketUuid: $marketUuid
      @classmethod
-     def testParamsList(cls,field):
-         inputObject = ""
+     def verifyParamsList(cls,field):
+         verifyParamsList = ""
          for param in field.paramsList :
-            inputObject = inputObject + param.name + ": $" + param.name + ", "
+             verifyParamsList = verifyParamsList + param.name + ": $" + param.name + ", "
 
-         if len(inputObject) > 0:
-             inputObject = inputObject[0:len(inputObject)-2]
-             inputObject = "\"" + inputObject + "\""
-         return inputObject
+         if len(verifyParamsList) > 0:
+             verifyParamsList = verifyParamsList[0:len(verifyParamsList)-2]
+             verifyParamsList = "\"" + verifyParamsList + "\""
+         return verifyParamsList
 
     #eg: "$after: String, $before: String, $first: Int, $last: Int, $marketUuid: String!"
      @classmethod
-     def queryParamList(cls,field):
-         queryParamList = ""
+     def paramTypeMap(cls,field):
+         paramTypeMap = ""
          for param in field.paramsList :
-             queryParamList += "$" + param.name + ": " + param.paramaType + ", "
-         if len(queryParamList) > 0:
-             queryParamList = queryParamList[0:len(queryParamList)-2]
-             queryParamList = "\"%s\""%queryParamList
-         return queryParamList
+             paramTypeMap += "$" + param.name + ": " + param.paramaType + ", "
+         if len(paramTypeMap) > 0:
+             paramTypeMap = paramTypeMap[0:len(paramTypeMap)-2]
+             paramTypeMap = "\"%s\""%paramTypeMap
+         return paramTypeMap
 
-
+     #参数variables
      @classmethod
      def variablesList(cls,field):
          variablesListString = ""
@@ -61,35 +50,4 @@ class pyDecoder(object):
              variablesListString = variablesListString[0:len(variablesListString)-2] #去最后的逗号
          return variablesListString
 
-     @classmethod
-     def handleSingleString(self, paramaList):
-        i = len(paramaList) - 1
-        length = len(paramaList)
-        signleParamsString = ""
-        lastType = ""
-
-        while i >= 0:
-            if i == length - 1:
-                lastType = paramaList[i]
-                # print(lastType)
-                pass
-            elif i == length - 2:
-                lastSec = paramaList[i]
-                if lastSec == "SCALAR":
-                    signleParamsString += lastType
-                elif lastSec == "ENUM":
-                    signleParamsString += "String"
-                elif lastSec == "INPUT_OBJECT":
-                    signleParamsString += "INPUT_OBJECT"
-                pass
-            else:
-                lastType = paramaList[i]
-                if lastType == "NON_NULL":
-                    signleParamsString += "!"
-                elif lastType == "LIST":
-                    signleParamsString = "[" + signleParamsString + "]"
-                    pass
-                pass
-            i = i - 1
-        return signleParamsString
 
