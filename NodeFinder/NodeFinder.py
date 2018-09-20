@@ -8,44 +8,78 @@ class Finder(object):
 
     #找到所有的接口和参数的对象列表
     def getAllFieldList(self):
-        fieldArray = self.getTypeField()
+        fieldArray = self.getTypeField()      # fields的内容,list
         allFieldList = []
         for signleField in fieldArray:
             apiModel = APIModel()
             apiModel.name = signleField["name"]
             apiModel.serviceName = signleField["service"]
-            apiModelParamlist = []
-            argsArray = signleField.get("args")
 
+            apiModelParamlist = []
+            argsArray = signleField.get("args")   # args内容
+
+            inputObjcTitle = ""
+            inputObjcName = ""
             for arg in argsArray:
                 # args里面的所有参数
                 paramModelT = paramModel()
-                paramModelT.paramasTypeTree = self.getParamsDic(arg)  # 将所有参数的要求保存到了一个栈中
+                paramModelT.paramasTypeTree = self.getParamsDic(arg)  # 将所有参数的要求保存到了一个栈中,所有kind和list
+
+                inputObjcTitle = self.hasInputObject(paramModelT.paramasTypeTree)
+                inputObjcName = arg["name"] #记录参数名称
                 paramModelT.name = arg["name"]
+
                 paramModelT.paramaType = self.handleSingleString(paramModelT.paramasTypeTree)
                 apiModelParamlist.append(paramModelT)
 
             apiModel.paramsList = apiModelParamlist
+            if inputObjcTitle != None and inputObjcTitle != "":
+                inputObjc = self.getInputObject(inputObjcTitle)
+                inputObjc.name = inputObjcName
+                apiModel.input_object = inputObjc
+
+
             allFieldList.append(apiModel)
         return allFieldList
 
+    def hasInputObject(self,paramasTypeTree):
+        length = len(paramasTypeTree)
+        objc = paramasTypeTree[(length - 2)]
+        if objc == "OBJECT" or objc == "INPUT_OBJECT":
+            return paramasTypeTree[length -1]
+        else:
+            return None
 
+    def getInputObject(self,inputObjcName):
+        inputObjc = inputObject()
+        inputObjcNodeDic = self.findAllTypeNode(inputObjcName)
+        inputModelParamlist = []
+        inputFields = inputObjcNodeDic["inputFields"]
+        for arg in inputFields:
+            argModel = paramModel()
+            argModel.paramasTypeTree = self.getParamsDic(arg)
+            argModel.name = arg["name"]
+            argModel.paramaType = self.handleSingleString(argModel.paramasTypeTree)
+            inputModelParamlist.append(argModel)
+        inputObjc.paramsList = inputModelParamlist
+        return inputObjc
 
     # 寻找以root节点为名称的类型 queryType为: subscriptionType queryType mutationType
     # 返回值为以该queryType下的整个大根
-    def findAllTypeNode(self):
-        queryTypeName = self.rootJson["data"]["__schema"][self.queryTpye]["name"]
+    def findAllTypeNode(self,queryTypeName):
+        # queryTypeName = self.rootJson["data"]["__schema"][self.queryTpye]["name"]
         typesArray = self.rootJson["data"]["__schema"]["types"]  # 是个list
         for signleType in typesArray:
             # 查看types下name为queryType_name值的
             if signleType["name"] == queryTypeName:
                 print("找到了名字为" + queryTypeName + "的节点")
                 break
-        return  signleType
+        return signleType
 
     #获取对应的节点中所有的 fields
     def getTypeField(self):
-        queryType = self.findAllTypeNode()
+        queryTypeName = self.rootJson["data"]["__schema"][self.queryTpye]["name"]
+        queryType = self.findAllTypeNode(queryTypeName)
         return queryType["fields"]
 
 
@@ -72,8 +106,8 @@ class Finder(object):
         else:
             paramList.append(ofTypeValue["kind"])
             paramList.append(ofTypeValue["name"])
-            if ofTypeValue["kind"] == "OBJECT":
-                print("最后的对象是一个object 需要再次进行递归探索")
+            # if ofTypeValue["kind"] == "OBJECT" or ofTypeValue["kind"] == "INPUT_OBJECT":
+            #     print("最后的对象是一个object 需要再次进行递归探索")
             return paramList
 
     def handleSingleString(cls, paramaList):
@@ -109,7 +143,6 @@ class Finder(object):
 
 
 
-
 #api接口对象
 class APIModel(object):
 
@@ -117,7 +150,12 @@ class APIModel(object):
         self.name = ""
         self.serviceName = ""
         self.paramsList = []
-        pass
+        self.input_object = None
+
+class inputObject(object):
+    def __init__(self,name = "",paramasTypeTree = []):
+        self.name = name
+        self.paramsList = []
     pass
 
 # 参数对象
@@ -130,3 +168,4 @@ class paramModel(object):
 
     pass
 
+# a=paramModel

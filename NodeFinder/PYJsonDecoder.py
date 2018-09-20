@@ -8,18 +8,28 @@ class pyDecoder(object):
          for param in fieldDic.paramsList:
             funcFormalParaList = funcFormalParaList + ", " + param.name
          return funcFormalParaList
-         pass
+
 
      #eg: after: $after,before: $before,first: $first,last: $last,marketUuid: $marketUuid
      @classmethod
      def verifyParamsList(cls,field):
          verifyParamsList = ""
-         for param in field.paramsList :
-             verifyParamsList = verifyParamsList + param.name + ": $" + param.name + ", "
+# input: {marketUuid: $marketId, side: $side, price: $price, amount: $amount}
+         if field.input_object != None:
+             for arg in field.input_object.paramsList:
+                 verifyParamsList = verifyParamsList + arg.name + ": $" + arg.name + ", "
 
-         if len(verifyParamsList) > 0:
-             verifyParamsList = verifyParamsList[0:len(verifyParamsList)-2]
-             verifyParamsList = "\"" + verifyParamsList + "\""
+             if len(verifyParamsList) > 0:
+                 verifyParamsList = verifyParamsList[0:len(verifyParamsList) - 2]
+                 verifyParamsList = "%s: {%s}"%(field.input_object.name,verifyParamsList)
+             print(verifyParamsList)
+         else:
+             for param in field.paramsList :
+                 verifyParamsList = verifyParamsList + param.name + ": $" + param.name + ", "
+
+             if len(verifyParamsList) > 0:
+                 verifyParamsList = verifyParamsList[0:len(verifyParamsList)-2]
+                 verifyParamsList = "\"" + verifyParamsList + "\""
          return verifyParamsList
 
     #eg: "$after: String, $before: String, $first: Int, $last: Int, $marketUuid: String!"

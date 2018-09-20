@@ -5,7 +5,7 @@ from PYJsonDecoder import pyDecoder
 
 type = "queryType"
 
-finder =  Finder(jsonString = jsonString,queryTpye=type)
+finder = Finder(jsonString = jsonString,queryTpye=type)
 allAPIList = finder.getAllFieldList()
 
 creater = GenCasePy()
@@ -18,6 +18,7 @@ for field in allAPIList:
     paramTypeMap = pyDecoder.paramTypeMap(field) #每个参数的类型
     verifyParamsList = pyDecoder.verifyParamsList(field) #验证参数
     variablesList = pyDecoder.variablesList(field) #variables中的参数
+
     creater.createPyFile(APIName = APIName,APIType = type,serviceName = APIServiceName,
                          funcFormalParaList = funcFormalParaList,paramTypeMap = paramTypeMap,
                          verifyParamsList = verifyParamsList,variableString = variablesList)
