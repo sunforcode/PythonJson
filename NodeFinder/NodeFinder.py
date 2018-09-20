@@ -33,8 +33,7 @@ class Finder(object):
 
     # 寻找以root节点为名称的类型 queryType为: subscriptionType queryType mutationType
     # 返回值为以该queryType下的整个大根
-    def findAllTypeNode(self):
-        queryTypeName = self.rootJson["data"]["__schema"][self.queryTpye]["name"]
+    def findAllTypeNode(self,queryTypeName):
         typesArray = self.rootJson["data"]["__schema"]["types"]  # 是个list
         for signleType in typesArray:
             # 查看types下name为queryType_name值的
@@ -45,7 +44,8 @@ class Finder(object):
 
     #获取对应的节点中所有的 fields
     def getTypeField(self):
-        queryType = self.findAllTypeNode()
+        queryTypeName = self.rootJson["data"]["__schema"][self.queryTpye]["name"]
+        queryType = self.findAllTypeNode(queryTypeName)
         return queryType["fields"]
 
 
@@ -106,9 +106,6 @@ class Finder(object):
                 pass
             i = i - 1
         return signleParamsString
-
-
-
 
 #api接口对象
 class APIModel(object):
