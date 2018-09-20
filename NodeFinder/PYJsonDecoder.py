@@ -14,7 +14,6 @@ class pyDecoder(object):
 
      @classmethod
      def handleSingleString(self, paramaList):
-
         i = len(paramaList) - 1
         length = len(paramaList)
         signleParamsString = ""

@@ -54,7 +54,7 @@ class Finder(object):
         # 如果获取到了oftype字典不为None,则进行递归的查找oftype
         if typeDic.get("ofType") != None:
             paramStack.append(typeDic["kind"])
-            result = self.getDataList("ofType", typeDic, paramStack)
+            result = self.getDataList("ofType", typeDic.get("ofType"), paramStack)
             return result
         # 如果没有oftype的限制,直接读取
         else:
