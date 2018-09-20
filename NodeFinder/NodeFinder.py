@@ -22,11 +22,13 @@ class Finder(object):
                 paramModelT = paramModel()
                 paramModelT.paramasTypeTree = self.getParamsDic(arg)  # 将所有参数的要求保存到了一个栈中
                 paramModelT.name = arg["name"]
+                paramModelT.paramaType = self.handleSingleString(paramModelT.paramasTypeTree)
                 apiModelParamlist.append(paramModelT)
 
             apiModel.paramsList = apiModelParamlist
             allFieldList.append(apiModel)
         return allFieldList
+
 
 
     # 寻找以root节点为名称的类型 queryType为: subscriptionType queryType mutationType
@@ -74,6 +76,37 @@ class Finder(object):
                 print("最后的对象是一个object 需要再次进行递归探索")
             return paramList
 
+    def handleSingleString(cls, paramaList):
+        i = len(paramaList) - 1
+        length = len(paramaList)
+        signleParamsString = ""
+        lastType = ""
+
+        while i >= 0:
+            if i == length - 1:
+                lastType = paramaList[i]
+                # print(lastType)
+                pass
+            elif i == length - 2:
+                lastSec = paramaList[i]
+                if lastSec == "SCALAR":
+                    signleParamsString += lastType
+                elif lastSec == "ENUM":
+                    signleParamsString += "String"
+                elif lastSec == "INPUT_OBJECT":
+                    signleParamsString += "INPUT_OBJECT"
+                pass
+            else:
+                lastType = paramaList[i]
+                if lastType == "NON_NULL":
+                    signleParamsString += "!"
+                elif lastType == "LIST":
+                    signleParamsString = "[" + signleParamsString + "]"
+                    pass
+                pass
+            i = i - 1
+        return signleParamsString
+
 
 
 
@@ -93,6 +126,7 @@ class paramModel(object):
     def __init__(self,name = "",paramasTypeTree = []):
         self.name = name
         self.paramasTypeTree = paramasTypeTree
+        self.paramaType = ""
 
     pass
 

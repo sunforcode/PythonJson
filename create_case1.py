@@ -3,7 +3,7 @@ import os
 
 class GenCasePy(object):
     """用于生成文件"""
-    def __init__(self, queryString, argsString, paramasString, apiName, serviceName, inputObject, variableString):
+    def __init__(self, queryString, funcFormalParaList, paramasString, apiName, serviceName, inputObject, variableString):
         '''
         :param queryString:query查询类型
         :param argsString:参数
@@ -13,7 +13,7 @@ class GenCasePy(object):
         :param variableString:variables参数
         '''
         self.queryString = queryString
-        self.argsString = argsString
+        self.funcFormalParaList = funcFormalParaList #形参列表
         self.paramasString = paramasString
         self.apiName = apiName
         self.serviceName = serviceName
@@ -21,6 +21,7 @@ class GenCasePy(object):
         self.variableString = variableString
         self.fileName = self.serviceName + ".py"
         self.first = False
+        self.createdServices = []
 
     def createFileClass(self):
         className = '''
@@ -33,8 +34,9 @@ class %s(base):''' % self.serviceName
 
     def createPyFile(self):
 
+
         funcContent = '''
-    def {funcName}(self,{args}):
+    def {apiName}(self{funcFormalParaList}):
         query="""{orderType} ({paramsString}) {{
   {apiName}({objcString}) {{
     orders {{
@@ -49,8 +51,9 @@ class %s(base):''' % self.serviceName
         variables = {{
 {variableString}
             }}
-        return self.request(query, operationName, variables)'''.format(funcName=self.apiName, args=self.argsString, orderType="query", paramsString=self.paramasString,
-                       apiName=self.apiName, objcString=self.inputObject, variableString=self.variableString)
+        return self.request(query, operationName, variables)'''.format(apiName=self.apiName, funcFormalParaList=self.funcFormalParaList,
+                                                                       orderType="query", paramsString=self.paramasString,
+                     objcString=self.inputObject, variableString=self.variableString)
         with open(self.fileName, "a+", encoding='utf-8') as fw:
         # print("=========123213213213213123")
         # print(text)
