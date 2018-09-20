@@ -1,6 +1,19 @@
 
 class pyDecoder(object):
-     def handleSingleString(self,paramaList):
+
+
+
+     def formartString(self, queryString, paramasString, APIName, inputObject):
+            formatString = """{query} ({paramas}) {{
+            {APIName}({inputObject}) {{
+                __typename
+            }}
+            }}""".format(query=queryString, paramas=paramasString, APIName=APIName, inputObject=inputObject)
+
+            return formatString
+
+     @classmethod
+     def handleSingleString(self, paramaList):
 
         i = len(paramaList) - 1
         length = len(paramaList)
@@ -32,12 +45,3 @@ class pyDecoder(object):
             i = i - 1
         return signleParamsString
 
-
-     def formartString(self, queryString, paramasString, APIName, inputObject):
-            formatString = """{query} ({paramas}) {{
-            {APIName}({inputObject}) {{
-                __typename
-            }}
-            }}""".format(query=queryString, paramas=paramasString, APIName=APIName, inputObject=inputObject)
-
-            return formatString

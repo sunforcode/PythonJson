@@ -6,6 +6,29 @@ class Finder(object):
         self.rootJson = json.loads(jsonString)
         self.queryTpye = queryTpye
 
+    #找到所有的接口和参数的对象列表
+    def getAllFieldList(self):
+        fieldArray = self.getTypeField()
+        allFieldList = []
+        for signleField in fieldArray:
+            apiModel = APIModel()
+            apiModel.name = signleField["name"]
+            apiModel.serviceName = signleField["service"]
+            apiModelParamlist = []
+            argsArray = signleField.get("args")
+
+            for arg in argsArray:
+                # args里面的所有参数
+                paramModelT = paramModel()
+                paramModelT.paramasTypeTree = self.getParamsDic(arg)  # 将所有参数的要求保存到了一个栈中
+                paramModelT.name = arg["name"]
+                apiModelParamlist.append(paramModelT)
+
+            apiModel.paramsList = apiModelParamlist
+            allFieldList.append(apiModel)
+        return allFieldList
+
+
     # 寻找以root节点为名称的类型 queryType为: subscriptionType queryType mutationType
     # 返回值为以该queryType下的整个大根
     def findAllTypeNode(self):
@@ -51,12 +74,16 @@ class Finder(object):
                 print("最后的对象是一个object 需要再次进行递归探索")
             return paramList
 
+
+
+
 #api接口对象
 class APIModel(object):
 
     def __init__(self):
         self.name = ""
         self.serviceName = ""
+        self.paramsList = []
         pass
     pass
 
@@ -66,6 +93,6 @@ class paramModel(object):
     def __init__(self,name = "",paramasTypeTree = []):
         self.name = name
         self.paramasTypeTree = paramasTypeTree
-        self.paramaTypeString = ""
+
     pass
 
