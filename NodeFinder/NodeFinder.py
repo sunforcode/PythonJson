@@ -141,8 +141,6 @@ class Finder(object):
             i = i - 1
         return signleParamsString
 
-
-
 #api接口对象
 class APIModel(object):
 
