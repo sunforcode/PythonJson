@@ -109,6 +109,7 @@ class pyDecoder(object):
                      print(resultString)
                      tempDic = ""
                      resultString += cls.deCoder(tempDic,objc.childFieldList,index+1)
+                     resultString += cls.multiplyT(index) + "__typename\n"
                      resultString = resultString +cls.multiplyT(index) +"}\n"
                      pass
                  else:

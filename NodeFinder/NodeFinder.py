@@ -103,7 +103,7 @@ class Finder(object):
             objectNameList: list = []
             for field in fieldsList:
                 nextLevelList = self.getParamsDic(field)
-
+                #warning : 在这里会造成一个寻找ApiKey的死循环，所以暂时做了一个排除处理
                 if nextLevelList[len(nextLevelList) -2] == "OBJECT" and nextLevelList[len(nextLevelList) -1] != "ApiKey":
                     next = self.gerReturnType(field)
                     fieldNameList.append(next)
