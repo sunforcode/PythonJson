@@ -37,7 +37,7 @@ class pyDecoder(object):
          #     verifyParamsList = verifyParamsList[0:len(verifyParamsList)-2]
          #     verifyParamsList = verifyParamsList
          if verifyParamsList != "":
-             verifyParamsList = "(" + verifyParamsList + ")"
+             verifyParamsList = "(" + verifyParamsList[1:len(verifyParamsList)] + ")"
 
          return verifyParamsList
 
