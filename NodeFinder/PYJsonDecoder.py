@@ -29,7 +29,7 @@ class pyDecoder(object):
                  verifyParamsList = "%s: {%s}"%(field.input_object.name,verifyParamsList)
              print(verifyParamsList)
 
-         verifyParamsList += "".join([",%s:$%s" % (x.paramasTypeTree[-1],x.paramasTypeTree[-1]) for x in field.paramsList])
+         verifyParamsList += ",".join(["%s:$%s" % (x.paramasTypeTree[-1],x.paramasTypeTree[-1]) for x in field.paramsList])
          # for param in field.paramsList :
          #     verifyParamsList = verifyParamsList + param.name + ": $" + param.name + ", "
          #
@@ -37,7 +37,7 @@ class pyDecoder(object):
          #     verifyParamsList = verifyParamsList[0:len(verifyParamsList)-2]
          #     verifyParamsList = verifyParamsList
          if verifyParamsList != "":
-             verifyParamsList = "(" + verifyParamsList[1:len(verifyParamsList)] + ")"
+             verifyParamsList = "(" + verifyParamsList + ")"
 
          return verifyParamsList
 
