@@ -17,7 +17,7 @@ class %s(base):''' % serviceName
         with open(fileName, "w", encoding='utf-8') as fw:
             fw.write(className)
 
-    def createPyFile(self, APIName, APIType, serviceName, funcFormalParaList, paramTypeMap,  verifyParamsList, variableString):
+    def createPyFile(self, APIName, APIType, serviceName, funcFormalParaList, paramTypeMap,  verifyParamsList, variableString,returnString):
         '''
         :param APIName: 接口名称,eg:addOrderAPI 
         :param APIType: API的类型,eg:query,mutation等
@@ -36,13 +36,9 @@ class %s(base):''' % serviceName
 
         funcContent = '''
     def {APIName}(self{funcFormalParaList}):
-        query="""{APIType} ({paramTypeMap}) {{
-  {APIName}({verifyParamsList}) {{
-    orders {{
-      id
-      __typename
-    }}
-    __typename
+        query="""{APIType}{paramTypeMap}{{
+  {APIName}{verifyParamsList}{{
+{returnString}
   }}
 }}
 """
@@ -53,7 +49,7 @@ class %s(base):''' % serviceName
         return self.request(query, operationName, variables)'''.format(
             APIName = APIName, funcFormalParaList = funcFormalParaList,
             APIType = APIType, paramTypeMap = paramTypeMap,
-            verifyParamsList = verifyParamsList, variableString = variableString)
+            verifyParamsList = verifyParamsList, variableString = variableString,returnString = returnString)
 
         with open(fileName, "a+", encoding='utf-8') as fw:
         # print("=========123213213213213123")

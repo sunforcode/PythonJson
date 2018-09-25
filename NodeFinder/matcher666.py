@@ -176,7 +176,7 @@ fragment Order on Order {
     def myTrades(self,marketId=None,afterTime=None,beforeTime=None,limit=None):
         query="""query ($marketId: String, $limit: Int, $beforeTime: DateTime, $afterTime: DateTime) {
   myTrades(marketUuid: $marketId, last: $limit, beforeTime: $beforeTime, afterTime: $afterTime) {
-    nodes {
+    nodes {  
       ...Trade
       __typename
     }
