@@ -93,6 +93,7 @@ class pyDecoder(object):
          if field.returnObject.childFieldList != None:
              resultString = ""
              res = cls.deCoder(resultString = resultString,childFieldList=field.returnObject.childFieldList,index=1)
+             res += "\t__typename"
              return res
          else:
              print("zaizhefanhui le ")
@@ -105,12 +106,12 @@ class pyDecoder(object):
              for objc in childFieldList:
                  if isinstance(objc, returnObjcet):
                      resultString =  resultString +cls.multiplyT(index) +objc.name
-                     resultString = resultString + "\n"+cls.multiplyT(index)+"{\n"
+                     resultString = resultString + "\n"+cls.multiplyT(index+1)+"{\n"
                      print(resultString)
-                     tempDic = ""
-                     resultString += cls.deCoder(tempDic,objc.childFieldList,index+1)
-                     resultString += cls.multiplyT(index) + "__typename\n"
-                     resultString = resultString +cls.multiplyT(index) +"}\n"
+                     tempResultString = ""
+                     resultString += cls.deCoder(tempResultString,objc.childFieldList,index+1)
+                     resultString += cls.multiplyT(index+1) + "__typename\n"
+                     resultString = resultString +cls.multiplyT(index+1) +"}\n"
                      pass
                  else:
                      resultString = resultString + cls.multiplyT(index) + objc + "\n"
@@ -120,7 +121,7 @@ class pyDecoder(object):
              return resultString
          else:
              # print(resultString)
-             # print("-======")
+             print("-======")
              return resultString
 
      @classmethod
